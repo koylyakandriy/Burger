@@ -17,6 +17,7 @@ const BuildControls = ({
 	disabled,
 	price,
 	purchasable,
+	ordered,
 }) => (
 	<div className={classes.BuildControls}>
 		<p>
@@ -35,6 +36,7 @@ const BuildControls = ({
 			type="button"
 			className={classes.OrderButton}
 			disabled={!purchasable}
+			onClick={ordered}
 		>
 			Order Now
 		</button>
