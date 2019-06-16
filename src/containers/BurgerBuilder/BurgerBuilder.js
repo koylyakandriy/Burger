@@ -4,6 +4,9 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import axios from '../../axios-order';
+import Spinner from '../../components/UI/Spinner/Spinner';
+import WithErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 const INGREDIENT_PRICES = {
 	salad: 0.5,
@@ -14,16 +17,25 @@ const INGREDIENT_PRICES = {
 
 class BurgerBuilder extends Component {
 	state = {
-		ingredients: {
-			salad: 0,
-			bacon: 0,
-			cheese: 0,
-			meat: 0,
-		},
+		ingredients: null,
 		totalPrice: 4,
 		purchasable: false,
 		purchasing: false,
+		loading: false,
+		error: false,
 	};
+
+	componentDidMount() {
+		axios
+			.get('https://burger-38bde.firebaseio.com/ingredients.json')
+			.then(response => {
+				this.setState({ ingredients: response.data });
+			})
+			.catch(error => {
+				console.log('error', error);
+				this.setState({ error: true });
+			});
+	}
 
 	addIngredientHandler = type => {
 		const { ingredients, totalPrice } = this.state;
@@ -68,7 +80,34 @@ class BurgerBuilder extends Component {
 		this.setState({ purchasing: false });
 	};
 
-	purchaseContinueHandler = () => {};
+	purchaseContinueHandler = () => {
+		const { ingredients, totalPrice } = this.state;
+		this.setState({ loading: true });
+		const order = {
+			ingredients,
+			price: totalPrice,
+			customer: {
+				name: 'Andriy Koylyak',
+				address: {
+					country: 'Ukraine',
+					city: 'Ivano-Frankivsk',
+					street: 'Troleibysna',
+				},
+				email: 'email@gmail.com',
+			},
+			deliveryMethod: 'fastest',
+		};
+		axios
+			.post('/orders.json', order)
+			.then(response => {
+				this.setState({ loading: false, purchasing: false });
+				console.log('response', response);
+			})
+			.catch(error => {
+				this.setState({ loading: false, purchasing: false });
+				console.log('error', error);
+			});
+	};
 
 	updatePurchaseState(ingredients) {
 		const sum = Object.keys(ingredients)
@@ -83,7 +122,14 @@ class BurgerBuilder extends Component {
 	}
 
 	render() {
-		const { ingredients, totalPrice, purchasable, purchasing } = this.state;
+		const {
+			ingredients,
+			totalPrice,
+			purchasable,
+			purchasing,
+			loading,
+			error,
+		} = this.state;
 
 		const disabledInfo = {
 			...ingredients,
@@ -92,28 +138,46 @@ class BurgerBuilder extends Component {
 		for (const key in disabledInfo) {
 			disabledInfo[key] = disabledInfo[key] <= 0;
 		}
+
+		let orderSummery = null;
+
+		let burger = error ? <p>Ingredients can not be loaded!</p> : <Spinner />;
+		if (ingredients) {
+			burger = (
+				<>
+					<Burger ingredients={ingredients} />
+					<BuildControls
+						ingredientAdded={this.addIngredientHandler}
+						ingredientRemove={this.removeIngredientHandler}
+						disabled={disabledInfo}
+						purchasable={purchasable}
+						ordered={this.purchaseHandler}
+						price={totalPrice}
+					/>
+				</>
+			);
+			orderSummery = (
+				<OrderSummary
+					purchaseCancelled={this.purchaseCancelHandler}
+					purchaseContinued={this.purchaseContinueHandler}
+					ingredients={ingredients}
+					price={totalPrice}
+				/>
+			);
+		}
+		if (loading) {
+			orderSummery = <Spinner />;
+		}
+
 		return (
 			<>
 				<Modal show={purchasing} modalClosed={this.purchaseCancelHandler}>
-					<OrderSummary
-						purchaseCancelled={this.purchaseCancelHandler}
-						purchaseContinued={this.purchaseContinueHandler}
-						ingredients={ingredients}
-						price={totalPrice}
-					/>
+					{orderSummery}
 				</Modal>
-				<Burger ingredients={ingredients} />
-				<BuildControls
-					ingredientAdded={this.addIngredientHandler}
-					ingredientRemove={this.removeIngredientHandler}
-					disabled={disabledInfo}
-					purchasable={purchasable}
-					ordered={this.purchaseHandler}
-					price={totalPrice}
-				/>
+				{burger}
 			</>
 		);
 	}
 }
 
-export default BurgerBuilder;
+export default WithErrorHandler(BurgerBuilder, axios);

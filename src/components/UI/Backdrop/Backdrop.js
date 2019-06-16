@@ -7,8 +7,12 @@ const Backdrop = ({ show, clicked }) =>
 	show ? <div className={classes.Backdrop} onClick={clicked} /> : null;
 
 Backdrop.propTypes = {
-	show: PropTypes.bool.isRequired,
+	show: PropTypes.bool,
 	clicked: PropTypes.func.isRequired,
+};
+
+Backdrop.defaultProps = {
+	show: '',
 };
 
 export default Backdrop;
