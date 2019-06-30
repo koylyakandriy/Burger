@@ -1,23 +1,15 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
-
-import Navigation from './NavigationItem/NavigationItem';
 
 import classes from './NavigationItems.css';
+import NavigationItem from './NavigationItem/NavigationItem';
 
-const NavigationItems = () => (
+const navigationItems = () => (
 	<ul className={classes.NavigationItems}>
-		<Navigation active link="/">
+		<NavigationItem link="/" exact>
 			Burger Builder
-		</Navigation>
-		<Navigation active={false} link="/">
-			Checkout
-		</Navigation>
+		</NavigationItem>
+		<NavigationItem link="/orders">Orders</NavigationItem>
 	</ul>
 );
 
-// NavigationItems.propTypes = {
-// 	active: PropTypes.bool.isRequired,
-// };
-
-export default NavigationItems;
+export default navigationItems;

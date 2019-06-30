@@ -1,45 +1,37 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
+import Aux from '../Auxiliary/Auxiliary';
+import classes from './Layout.css';
 import Toolbar from '../../components/Navigation/Toolbar/Toolbar';
 import SideDrawer from '../../components/Navigation/SideDrawer/SideDrawer';
 
-import classes from './Layout.css';
-
 class Layout extends Component {
 	state = {
-		showsSideDrawer: false,
+		showSideDrawer: false,
 	};
 
 	sideDrawerClosedHandler = () => {
-		this.setState(state => ({ showsSideDrawer: !state.showsSideDrawer }));
+		this.setState({ showSideDrawer: false });
 	};
 
 	sideDrawerToggleHandler = () => {
 		this.setState(prevState => {
-			return { showsSideDrawer: !prevState.showsSideDrawer };
+			return { showSideDrawer: !prevState.showSideDrawer };
 		});
 	};
 
 	render() {
-		const { children } = this.props;
-		const { showsSideDrawer } = this.state;
 		return (
-			<>
+			<Aux>
 				<Toolbar drawerToggleClicked={this.sideDrawerToggleHandler} />
 				<SideDrawer
-					open={showsSideDrawer}
+					open={this.state.showSideDrawer}
 					closed={this.sideDrawerClosedHandler}
 				/>
-				<main className={classes.Content}>{children}</main>
-			</>
+				<main className={classes.Content}>{this.props.children}</main>
+			</Aux>
 		);
 	}
 }
-
-Layout.propTypes = {
-	children: PropTypes.oneOfType([PropTypes.object, PropTypes.symbol])
-		.isRequired,
-};
 
 export default Layout;

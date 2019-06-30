@@ -1,30 +1,21 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import classes from './BuildControl.css';
 
-const BuildControl = ({ label, added, removed, disabled }) => (
+const buildControl = props => (
 	<div className={classes.BuildControl}>
-		<div className={classes.Label}>{label}</div>
+		<div className={classes.Label}>{props.label}</div>
 		<button
 			className={classes.Less}
-			onClick={removed}
-			type="button"
-			disabled={disabled}
+			onClick={props.removed}
+			disabled={props.disabled}
 		>
 			Less
 		</button>
-		<button className={classes.More} onClick={added} type="button">
+		<button className={classes.More} onClick={props.added}>
 			More
 		</button>
 	</div>
 );
 
-BuildControl.propTypes = {
-	label: PropTypes.string.isRequired,
-	added: PropTypes.func.isRequired,
-	removed: PropTypes.func.isRequired,
-	disabled: PropTypes.bool.isRequired,
-};
-
-export default BuildControl;
+export default buildControl;

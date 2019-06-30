@@ -18,14 +18,14 @@
 
 .BuildControl button:disabled {
 	cursor: default;
-	color: #fff;
+	color: #ccc;
 	border: 1px solid #7e7365;
 	background-color: #ac9980;
 }
 
 .BuildControl button:hover:disabled {
 	cursor: not-allowed;
-	color: #fff;
+	color: #ccc;
 	background-color: #ac9980;
 }
 
@@ -36,23 +36,23 @@
 }
 
 .BuildControl .Less {
-	color: #fff;
+	color: white;
 	background-color: #d39952;
 }
 
 .BuildControl .More {
-	color: #fff;
+	color: white;
 	background-color: #8f5e1e;
 }
 
 .BuildControl .Less:hover,
 .BuildControl .Less:active {
-	color: #fff;
+	color: white;
 	background-color: #daa972;
 }
 
 .BuildControl .More:hover,
 .BuildControl .More:active {
-	color: #fff;
+	color: white;
 	background-color: #99703f;
 }

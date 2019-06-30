@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 
 import Modal from '../../components/UI/Modal/Modal';
+import Aux from '../Auxiliary/Auxiliary';
 
-const WithErrorHandler = (WrappedComponent, axios) => {
-	// eslint-disable-next-line react/display-name
+const withErrorHandler = (WrappedComponent, axios) => {
 	return class extends Component {
-		state = { error: null };
+		state = {
+			error: null,
+		};
 
 		componentWillMount() {
 			this.reqInterceptor = axios.interceptors.request.use(req => {
@@ -15,7 +17,7 @@ const WithErrorHandler = (WrappedComponent, axios) => {
 			this.resInterceptor = axios.interceptors.response.use(
 				res => res,
 				error => {
-					this.setState({ error });
+					this.setState({ error: error });
 				},
 			);
 		}
@@ -25,22 +27,24 @@ const WithErrorHandler = (WrappedComponent, axios) => {
 			axios.interceptors.response.eject(this.resInterceptor);
 		}
 
-		errorConfirmedError = () => {
+		errorConfirmedHandler = () => {
 			this.setState({ error: null });
 		};
 
 		render() {
-			const { error } = this.state;
 			return (
-				<>
-					<Modal show={error} modalClosed={this.errorConfirmedError}>
-						{error ? error.message : null}
+				<Aux>
+					<Modal
+						show={this.state.error}
+						modalClosed={this.errorConfirmedHandler}
+					>
+						{this.state.error ? this.state.error.message : null}
 					</Modal>
 					<WrappedComponent {...this.props} />
-				</>
+				</Aux>
 			);
 		}
 	};
 };
 
-export default WithErrorHandler;
+export default withErrorHandler;

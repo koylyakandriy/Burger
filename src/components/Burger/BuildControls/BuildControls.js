@@ -1,8 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-import BuildControl from './BuildControl/BuildControl';
 import classes from './BuildControls.css';
+import BuildControl from './BuildControl/BuildControl';
 
 const controls = [
 	{ label: 'Salad', type: 'salad' },
@@ -11,45 +10,28 @@ const controls = [
 	{ label: 'Meat', type: 'meat' },
 ];
 
-const BuildControls = ({
-	ingredientAdded,
-	ingredientRemove,
-	disabled,
-	price,
-	purchasable,
-	ordered,
-}) => (
+const buildControls = props => (
 	<div className={classes.BuildControls}>
 		<p>
-			Current Price: <strong>{price.toFixed(2)}</strong>
+			Current Price: <strong>{props.price.toFixed(2)}</strong>
 		</p>
 		{controls.map(ctrl => (
 			<BuildControl
 				key={ctrl.label}
 				label={ctrl.label}
-				added={() => ingredientAdded(ctrl.type)}
-				removed={() => ingredientRemove(ctrl.type)}
-				disabled={disabled[ctrl.type]}
+				added={() => props.ingredientAdded(ctrl.type)}
+				removed={() => props.ingredientRemoved(ctrl.type)}
+				disabled={props.disabled[ctrl.type]}
 			/>
 		))}
 		<button
-			type="button"
 			className={classes.OrderButton}
-			disabled={!purchasable}
-			onClick={ordered}
+			disabled={!props.purchasable}
+			onClick={props.ordered}
 		>
-			Order Now
+			ORDER NOW
 		</button>
 	</div>
 );
 
-BuildControls.propTypes = {
-	ingredientAdded: PropTypes.func.isRequired,
-	ingredientRemove: PropTypes.func.isRequired,
-	disabled: PropTypes.objectOf(PropTypes.bool).isRequired,
-	price: PropTypes.number.isRequired,
-	purchasable: PropTypes.bool.isRequired,
-	ordered: PropTypes.func.isRequired,
-};
-
-export default BuildControls;
+export default buildControls;
